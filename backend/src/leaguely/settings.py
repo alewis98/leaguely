@@ -37,6 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'api',
+    'account',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -47,6 +50,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'account.middleware.LoginRequiredMiddleware',
 ]
 
 ROOT_URLCONF = 'leaguely.urls'
@@ -99,6 +103,12 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Custom User Model
+AUTH_USER_MODEL = 'auth.User'
+
+# Email Settings
+EMAIL_HOST = 'localhost'
+EMAIL_PORT = 1025
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
@@ -115,6 +125,40 @@ USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/2.1/howto/static-files/
+# https://docs.djangoproject.com/en/2.0/howto/static-files/
+
+# URLs
+
+LOGOUT_URL = '/accounts/logout/'
+
+LOGIN_URL = '/accounts/login/'
+
+LOGIN_REDIRECT_URL = '/accounts/profile/'
+
+HOME_URL = '/home/'
+
+LOGIN_EXEMPT_URLS = (
+    r'^accounts/login/$',
+    r'^accounts/logout/$',
+    r'^accounts/signup/$',
+    r'^accounts/reset_password/$',
+    r'^accounts/reset_password/done/$',
+    r'^accounts/reset_password/complete/$',
+    r'^accounts/reset_password/confirm/(?P<uidb64>[0-9A-Za-z]+)-(?P<token>.+)/$',
+    r'^home/',
+)
+
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'leaguely/media')
+
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ]
+}
