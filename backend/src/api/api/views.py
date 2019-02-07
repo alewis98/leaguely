@@ -31,4 +31,34 @@ class LeagueListView(ListAPIView):
         queryset = organization.leagues.all()
         return queryset
 
-        
+class LeagueDetailView(RetrieveAPIView):
+    queryset = League.objects.all()
+    serializer_class = LeagueSerializer
+    lookup_url_kwarg = 'pk2'
+
+    
+class DivisionListView(ListAPIView):
+    serializer_class = DivisionSerializer
+
+    def get_queryset(self):
+        league = League.objects.get(pk=self.kwargs['pk2'])
+        queryset = league.divisions.all()
+        return queryset
+    
+class DivisionDetailView(RetrieveAPIView):
+    queryset = Division.objects.all()
+    serializer_class = DivisionSerializer
+    lookup_url_kwarg = 'pk3'
+
+class TeamListView(ListAPIView):
+    serializer_class = TeamSerializer
+
+    def get_queryset(self):
+        division = Division.objects.get(pk=self.kwargs['pk3'])
+        queryset = division.teams.all()
+        return queryset
+
+class TeamDetailView(RetrieveAPIView):
+    queryset = Team.objects.all()
+    serializer_class = TeamSerializer
+    lookup_url_kwarg = 'pk4'

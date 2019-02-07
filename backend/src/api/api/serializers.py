@@ -47,3 +47,14 @@ class DivisionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Division
         fields = '__all__'
+
+
+class PlayerProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PlayerProfile
+        fields = '__all__'
+
+class PlayerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Player
+        fields = '__all__'

@@ -65,6 +65,8 @@ class CoachProfile(models.Model):
     # user
     user = models.OneToOneField(UserProfile, on_delete=models.CASCADE)
     # other coach specific data
+    def __str__(self):
+        return self.user.to_string()
 
 
 # Team-specific profile
@@ -83,8 +85,7 @@ class Coach(models.Model):
     position = models.IntegerField(choices=POS_CHOICES, default=HEAD)
 
     def __str__(self):
-        return self.user.to_string()
-
+        return self.coach_profile.__str__()
 
 
 
@@ -105,22 +106,6 @@ class Field(models.Model):
     # location
 
 
-class Team(models.Model):
-    # name
-    name = models.CharField(max_length=128)
-    # color
-    color = models.CharField(max_length=20, null=True, blank=True)
-    # coaches
-    coaches = models.ManyToManyField(Coach, blank=True)
-    # players
-    players = models.ManyToManyField(Player, blank=True)
-
-    def __str__(self):
-        if self.color is not None:
-            return str(self.name) + " (" + str(self.color) + ")"
-        return str(self.name)
-
-
 class Organization(models.Model):
     # name
     name = models.CharField(max_length=128)
@@ -131,6 +116,9 @@ class Organization(models.Model):
     # players
     players = models.ManyToManyField(Player, blank=True)
 
+    def __str__(self):
+        return str(self.name)
+
 
 class League(models.Model):
     # name
@@ -138,27 +126,51 @@ class League(models.Model):
     # organization
     organization = models.ForeignKey(Organization, on_delete=models.DO_NOTHING, related_name='leagues', null=True, blank=True)
 
+    def __str__(self):
+        return str(self.name)
+
 
 class Division(models.Model):
     # name
     name = models.CharField(max_length=128)
     # league
-    league = models.ForeignKey(League, on_delete=models.DO_NOTHING, related_name='league', null=True, blank=True)
+    league = models.ForeignKey(League, on_delete=models.DO_NOTHING, related_name='divisions', null=True, blank=True)
+
+    def __str__(self):
+        return str(self.name)
+
+
+class Team(models.Model):
+    # name
+    name = models.CharField(max_length=128)
+    # color
+    color = models.CharField(max_length=20, null=True, blank=True)
+    # coaches
+    coaches = models.ManyToManyField(Coach, blank=True)
+    # players
+    players = models.ManyToManyField(Player, blank=True)
+    # division
+    division = models.ForeignKey(Division, on_delete=models.DO_NOTHING, related_name='teams', null=True, blank=True)
+
+    def __str__(self):
+        if self.color is not None:
+            return str(self.name) + " (" + str(self.color) + ")"
+        return str(self.name)
 
 
 class Game(models.Model):
     # team1
-    home_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='home_team', null=True, blank=True)
+    home_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='home_games', null=True, blank=True)
     # team2
-    away_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='away_team', null=True, blank=True)
+    away_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='away_games', null=True, blank=True)
     # referees
     referees = models.ManyToManyField(Referee, blank=True)
     # time/date
     date = models.DateTimeField()
     # field
-    field = models.ForeignKey(Field, on_delete=models.DO_NOTHING, related_name='field', null=True, blank=True)
+    field = models.ForeignKey(Field, on_delete=models.DO_NOTHING, related_name='games', null=True, blank=True)
     # division
-    division = models.ForeignKey(Division, on_delete=models.DO_NOTHING, related_name='division', null=True, blank=True)
+    division = models.ForeignKey(Division, on_delete=models.DO_NOTHING, related_name='games', null=True, blank=True)
     
     # @property
     # def get_field(self):
