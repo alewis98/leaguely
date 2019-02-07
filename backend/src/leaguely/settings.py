@@ -40,9 +40,11 @@ INSTALLED_APPS = [
     'api',
     'account',
     'rest_framework',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -50,7 +52,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'account.middleware.LoginRequiredMiddleware',
+   # 'account.middleware.LoginRequiredMiddleware',
 ]
 
 ROOT_URLCONF = 'leaguely.urls'
@@ -146,6 +148,7 @@ LOGIN_EXEMPT_URLS = (
     r'^accounts/reset_password/complete/$',
     r'^accounts/reset_password/confirm/(?P<uidb64>[0-9A-Za-z]+)-(?P<token>.+)/$',
     r'^home/',
+    r'^admin/*',
 )
 
 
@@ -162,3 +165,5 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
     ]
 }
+
+CORS_ORIGIN_ALLOW_ALL = True

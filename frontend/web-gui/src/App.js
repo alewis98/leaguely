@@ -1,28 +1,25 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import Titles from "./components/Titles"
+import Form from "./components/Form"
 
-class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
-    );
+class App extends React.Component {
+
+  getSomething = async (e) => {
+    e.preventDefault();
+    const call = await fetch(`http://localhost:8000/api/users/`);
+    const data = await call.json();
+    console.log(data);
   }
-}
+
+  render() {
+    return(
+      <div>
+        <Titles></Titles>
+        <Form getSomething={this.getSomething}/>
+      </div>
+    )
+  }
+};
 
 export default App;
+      

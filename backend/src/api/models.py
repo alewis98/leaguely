@@ -42,25 +42,50 @@ from account.models import UserProfile
 
 # post_save.connect(create_profile, sender=User)
 
-
-class Player(models.Model):
-    # name
-    
+# overarching player profile
+class PlayerProfile(models.Model):
+    # user
     user = models.OneToOneField(UserProfile, on_delete=models.CASCADE)
+    #rating
+
+# team-specific profile
+class Player(models.Model):
+    # player profile
+    player_profile = models.ForeignKey(PlayerProfile, on_delete=models.DO_NOTHING, related_name='player_profile', null=True, blank=True)
     number = models.IntegerField(default=8, validators=[MaxValueValidator(99), MinValueValidator(0)])
     goals = models.IntegerField(default=0)
     assists = models.IntegerField(default=0)
 
-    def __str__(self):
-        return self.user.to_string()
+  #  def __str__(self):
+ #       return self.user.to_string()
 
 
-class Coach(models.Model):
-    # name
+# Overarching profile
+class CoachProfile(models.Model):
+    # user
     user = models.OneToOneField(UserProfile, on_delete=models.CASCADE)
+    # other coach specific data
+
+
+# Team-specific profile
+class Coach(models.Model):
+    # coach profile
+    coach_profile = models.ForeignKey(CoachProfile, on_delete=models.DO_NOTHING, related_name='coach_profile', null=True, blank=True)
+    # type
+    HEAD = 1
+    ASST = 2
+    CO = 3
+    POS_CHOICES = (
+        (HEAD, 'Head'),
+        (ASST, 'Assistant'),
+        (CO, 'Co'),
+    )
+    position = models.IntegerField(choices=POS_CHOICES, default=HEAD)
 
     def __str__(self):
         return self.user.to_string()
+
+
 
 
 class Referee(models.Model):
@@ -85,12 +110,10 @@ class Team(models.Model):
     name = models.CharField(max_length=128)
     # color
     color = models.CharField(max_length=20, null=True, blank=True)
-    # coach
-    coach = models.ForeignKey(Coach, on_delete=models.DO_NOTHING, related_name='coach', null=True, blank=True)
-    # assistant coach
-    assistant_coach = models.ForeignKey(Coach, on_delete=models.DO_NOTHING, related_name='assistant_coach', null=True, blank=True)
+    # coaches
+    coaches = models.ManyToManyField(Coach, blank=True)
     # players
-    players = models.ForeignKey(Player, on_delete=models.DO_NOTHING, related_name='players', null=True, blank=True)
+    players = models.ManyToManyField(Player, blank=True)
 
     def __str__(self):
         if self.color is not None:
@@ -98,33 +121,46 @@ class Team(models.Model):
         return str(self.name)
 
 
-class Game(models.Model):
-    # team1
-    home_team = models.OneToOneField(Team, on_delete=models.CASCADE, related_name='home_team')
-    # team2
-    away_team = models.OneToOneField(Team, on_delete=models.CASCADE, related_name='away_team')
-    # referees
-    referees = models.ForeignKey(Referee, on_delete=models.DO_NOTHING, related_name='referees', null=True, blank=True)
-    # time/date
-    date = models.DateTimeField()
-    # field
-    field = models.ForeignKey(Field, on_delete=models.DO_NOTHING, related_name='field', null=True, blank=True)
-
-    # @property
-    # def get_field(self):
-    #     if self.field is not None:
-    #         return 
-
-
-class Division(models.Model):
+class Organization(models.Model):
     # name
     name = models.CharField(max_length=128)
-    # games
-    games = models.ForeignKey(Game, on_delete=models.DO_NOTHING, related_name='games', null=True, blank=True)
+    # coaches
+    coaches = models.ManyToManyField(Coach, blank=True)
+    # referees
+    referees = models.ManyToManyField(Referee, blank=True)
+    # players
+    players = models.ManyToManyField(Player, blank=True)
 
 
 class League(models.Model):
     # name
     name = models.CharField(max_length=128)
-    # divisions
-    divisions = models.ForeignKey(Division, on_delete=models.DO_NOTHING, related_name='divisions', null=True, blank=True)
+    # organization
+    organization = models.ForeignKey(Organization, on_delete=models.DO_NOTHING, related_name='leagues', null=True, blank=True)
+
+
+class Division(models.Model):
+    # name
+    name = models.CharField(max_length=128)
+    # league
+    league = models.ForeignKey(League, on_delete=models.DO_NOTHING, related_name='league', null=True, blank=True)
+
+
+class Game(models.Model):
+    # team1
+    home_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='home_team', null=True, blank=True)
+    # team2
+    away_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='away_team', null=True, blank=True)
+    # referees
+    referees = models.ManyToManyField(Referee, blank=True)
+    # time/date
+    date = models.DateTimeField()
+    # field
+    field = models.ForeignKey(Field, on_delete=models.DO_NOTHING, related_name='field', null=True, blank=True)
+    # division
+    division = models.ForeignKey(Division, on_delete=models.DO_NOTHING, related_name='division', null=True, blank=True)
+    
+    # @property
+    # def get_field(self):
+    #     if self.field is not None:
+    #         return 
