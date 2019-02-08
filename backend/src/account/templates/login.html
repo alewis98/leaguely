@@ -7,6 +7,7 @@
 {% block body %}
 <div class="container">
     <h1>Welcome Back!</h1>
+    <a href="{% url 'social:begin' 'google-oauth2' %}">Login with Google</a><br>
     <form method='POST'>
         {% csrf_token %}
         {{ form.as_p }}

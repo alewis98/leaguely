@@ -1,7 +1,9 @@
 from django.urls import path
+from rest_framework.authtoken import views as drf_views
 
 from .views import *
 urlpatterns = [
+    path('auth/', drf_views.obtain_auth_token, name='auth'),
     path('users/', UserProfileListView.as_view()),
     path('users/<pk>', UserProfileDetailView.as_view()),
     path('organizations/', OrganizationListView.as_view()),

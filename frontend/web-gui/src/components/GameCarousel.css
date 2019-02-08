@@ -1,0 +1,9 @@
+.container-outer { 
+    width: 100%; 
+    overflow-x: scroll; 
+    scrollbar-width: none;
+}
+
+.game-card-group {
+    flex-flow: nowrap
+}

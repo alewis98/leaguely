@@ -1,5 +1,6 @@
 from django.urls import path, re_path
-from django.conf.urls import url
+from django.conf.urls import url, include
+from django.conf import settings
 from . import views
 #from django.contrib.auth.views import login, logout, password_reset, password_reset_done, password_reset_confirm, password_reset_complete
 from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView, PasswordChangeDoneView, PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
@@ -7,9 +8,11 @@ from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView,
 app_name = 'account'
 urlpatterns = [
     # Accounts
+    path('auth/', include('social_django.urls', namespace='social')),
+    path('logout/', LogoutView.as_view(template_name='logout.html'), {'next_page': settings.LOGOUT_REDIRECT_URL}, name='logout'),
     path('signup/', views.signup, name='account-signup'),
     path('login/', LoginView.as_view(template_name='login.html'), name='login'),
-    path('logout/', LogoutView.as_view(template_name='logout.html'), name='logout'),
+    #path('logout/', LogoutView.as_view(template_name='logout.html'), name='logout'),
     path('profile/', views.view_profile, name='view-profile'),
     path('profile/edit/', views.edit_profile, name='edit-profile'),
     # path('change_password/', views.account.change_password, name='change-password'),

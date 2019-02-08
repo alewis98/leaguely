@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'account',
     'rest_framework',
     'corsheaders',
+    'social_django',
 ]
 
 MIDDLEWARE = [
@@ -52,7 +53,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-   # 'account.middleware.LoginRequiredMiddleware',
+    'social_django.middleware.SocialAuthExceptionMiddleware',
+    # 'account.middleware.LoginRequiredMiddleware',
 ]
 
 ROOT_URLCONF = 'leaguely.urls'
@@ -60,7 +62,7 @@ ROOT_URLCONF = 'leaguely.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -68,6 +70,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -105,6 +109,18 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.open_id.OpenIdAuth',
+    'social_core.backends.google.GoogleOpenId',
+    'social_core.backends.google.GoogleOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '875483966166-mbqliki21cshiho4elhful3l79h9albn.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '6PylwXKXkI64MtZs8IJRVs-N'
+
+SOCIAL_AUTH_URL_NAMESPACE = 'social'
+
 # Custom User Model
 AUTH_USER_MODEL = 'auth.User'
 
@@ -131,25 +147,30 @@ USE_TZ = True
 
 # URLs
 
-LOGOUT_URL = '/accounts/logout/'
+# LOGIN_URL = 'login'
+# LOGIN_REDIRECT_URL = 'view-profile'
+# LOGOUT_REDIRECT_URL = '/'
 
-LOGIN_URL = '/accounts/login/'
 
-LOGIN_REDIRECT_URL = '/accounts/profile/'
+# #LOGOUT_URL = '/accounts/logout/'
 
-HOME_URL = '/home/'
+# #LOGIN_URL = '/accounts/login/'
 
-LOGIN_EXEMPT_URLS = (
-    r'^accounts/login/$',
-    r'^accounts/logout/$',
-    r'^accounts/signup/$',
-    r'^accounts/reset_password/$',
-    r'^accounts/reset_password/done/$',
-    r'^accounts/reset_password/complete/$',
-    r'^accounts/reset_password/confirm/(?P<uidb64>[0-9A-Za-z]+)-(?P<token>.+)/$',
-    r'^home/',
-    r'^admin/*',
-)
+# #LOGIN_REDIRECT_URL = '/accounts/profile/'
+
+# HOME_URL = '/home/'
+
+# LOGIN_EXEMPT_URLS = (
+#     r'^accounts/login/$',
+#     r'^accounts/logout/$',
+#     r'^accounts/signup/$',
+#     r'^accounts/reset_password/$',
+#     r'^accounts/reset_password/done/$',
+#     r'^accounts/reset_password/complete/$',
+#     r'^accounts/reset_password/confirm/(?P<uidb64>[0-9A-Za-z]+)-(?P<token>.+)/$',
+#     r'^home/',
+#     r'^admin/*',
+# )
 
 
 STATIC_URL = '/static/'
