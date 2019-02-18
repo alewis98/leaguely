@@ -105,6 +105,9 @@ class Field(models.Model):
     name = models.CharField(max_length=128)
     # location
 
+    def __str__(self):
+        return str(self.name)
+
 
 class Organization(models.Model):
     # name
@@ -171,6 +174,9 @@ class Game(models.Model):
     field = models.ForeignKey(Field, on_delete=models.DO_NOTHING, related_name='games', null=True, blank=True)
     # division
     division = models.ForeignKey(Division, on_delete=models.DO_NOTHING, related_name='games', null=True, blank=True)
+
+    def __str__(self):
+        return self.home_team.__str__() + " vs " + self.away_team.__str__()
     
     # @property
     # def get_field(self):

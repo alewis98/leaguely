@@ -54,7 +54,14 @@ class PlayerProfileSerializer(serializers.ModelSerializer):
         model = PlayerProfile
         fields = '__all__'
 
+
 class PlayerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Player
+        fields = '__all__'
+
+
+class GameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Game
         fields = '__all__'

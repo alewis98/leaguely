@@ -15,5 +15,6 @@ urlpatterns = [
     path('organizations/<pk>/leagues/<pk2>/divisions/<pk3>', DivisionDetailView.as_view()),
     path('organizations/<pk>/leagues/<pk2>/divisions/<pk3>/teams/', TeamListView.as_view()),
     path('organizations/<pk>/leagues/<pk2>/divisions/<pk3>/teams/<pk4>', TeamDetailView.as_view()),
+    path('organizations/<pk>/leagues/<pk2>/divisions/<pk3>/games/', DivisionGamesListView.as_view()),
 ]
 

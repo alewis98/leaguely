@@ -62,3 +62,13 @@ class TeamDetailView(RetrieveAPIView):
     queryset = Team.objects.all()
     serializer_class = TeamSerializer
     lookup_url_kwarg = 'pk4'
+
+class DivisionGamesListView(ListAPIView):
+    serializer_class = GameSerializer
+
+    def get_queryset(self):
+        organization = Organization.objects.get(pk=self.kwargs['pk'])
+        league = organization.leagues.get(pk=self.kwargs['pk2'])
+        division = league.divisions.get(pk=self.kwargs['pk3'])
+        queryset = division.games.all()
+        return queryset
