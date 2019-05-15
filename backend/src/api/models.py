@@ -48,17 +48,6 @@ class PlayerProfile(models.Model):
     user = models.OneToOneField(UserProfile, on_delete=models.CASCADE)
     #rating
 
-# team-specific profile
-class Player(models.Model):
-    # player profile
-    player_profile = models.ForeignKey(PlayerProfile, on_delete=models.DO_NOTHING, related_name='player_profile', null=True, blank=True)
-    number = models.IntegerField(default=8, validators=[MaxValueValidator(99), MinValueValidator(0)])
-    goals = models.IntegerField(default=0)
-    assists = models.IntegerField(default=0)
-
-  #  def __str__(self):
- #       return self.user.to_string()
-
 
 # Overarching profile
 class CoachProfile(models.Model):
@@ -70,9 +59,9 @@ class CoachProfile(models.Model):
 
 
 # Team-specific profile
-class Coach(models.Model):
+class TeamCoachProfile(models.Model):
     # coach profile
-    coach_profile = models.ForeignKey(CoachProfile, on_delete=models.DO_NOTHING, related_name='coach_profile', null=True, blank=True)
+    coach_profile = models.ForeignKey(CoachProfile, on_delete=models.DO_NOTHING, related_name='team_coach_profile', null=True, blank=True)
     # type
     HEAD = 1
     ASST = 2
@@ -113,7 +102,7 @@ class Organization(models.Model):
     # name
     name = models.CharField(max_length=128)
     # coaches
-    coaches = models.ManyToManyField(Coach, blank=True)
+    coaches = models.ManyToManyField(CoachProfile, blank=True)
     # referees
     referees = models.ManyToManyField(Referee, blank=True)
     # players
@@ -161,6 +150,33 @@ class Team(models.Model):
         return str(self.name)
 
 
+# team-specific profile
+class TeamPlayerProfile(models.Model):
+    # player profile
+    player_profile = models.ForeignKey(PlayerProfile, on_delete=models.DO_NOTHING, related_name='team_player_profile', null=True, blank=True)
+    team = models.ForeignKey(Team, on_delete=models.DO_NOTHING, related_name='team_player_profile', null=True, blank=True)
+    number = models.IntegerField(default=8, validators=[MaxValueValidator(99), MinValueValidator(0)])
+    goals = models.IntegerField(default=0)
+    assists = models.IntegerField(default=0)
+
+  #  def __str__(self):
+ #       return self.user.to_string()
+
+
+class Stat(models.Model):
+    GL = 1
+    ASST = 2
+    CLR = 3
+    SV = 4
+    STAT_CHOICES = (
+        (GL, 'Goal'),
+        (ASST, 'Assist'),
+        (CLR, 'Clear'),
+        (SV, 'Save'),
+    )
+    type = models.IntegerField(choices=STAT_CHOICES, default=GL)
+
+
 class Game(models.Model):
     # team1
     home_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='home_games', null=True, blank=True)
@@ -174,6 +190,8 @@ class Game(models.Model):
     field = models.ForeignKey(Field, on_delete=models.DO_NOTHING, related_name='games', null=True, blank=True)
     # division
     division = models.ForeignKey(Division, on_delete=models.DO_NOTHING, related_name='games', null=True, blank=True)
+    # stats
+    stats = models.ForeignKey(Stat, on_delete=models.DO_NOTHING, related_name='game', null=True, blank=True)
 
     def __str__(self):
         return self.home_team.__str__() + " vs " + self.away_team.__str__()
@@ -182,3 +200,13 @@ class Game(models.Model):
     # def get_field(self):
     #     if self.field is not None:
     #         return 
+
+
+# game-specific profile
+class GamePlayerProfile(models.Model):
+    team_player_profile = models.ForeignKey(TeamPlayerProfile, on_delete=models.DO_NOTHING, related_name='game_player_profile', null=True, blank=True)
+    game = models.ForeignKey(Game, on_delete=models.DO_NOTHING, related_name='game_player_profile', null=True, blank=True)
+    goals = models.IntegerField(default=0)
+    assists = models.IntegerField(default=0)
+
+
